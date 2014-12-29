@@ -31,8 +31,9 @@ def f_set_diff(f1, f2):
   f2_data = set([x.rstrip() for x in open(f2).readlines()])
   return f1_data - f2_data
 
-def json_read(json_str, compound_key=None):
+def json_read(json_file, compound_key=None):
   """ Read a json file """
+  json_str = ''.join(fileinput.input(json_file))
   ds = json.loads(json_str)
 
   if compound_key is not None:

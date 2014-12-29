@@ -143,7 +143,7 @@ def parse_cmdline(args):
                       help='method signature comma sep - builtin|list:builtin',
                       default=[])
   parser.add_argument('-a', '--args', help='method args',
-                      nargs=argparse.REMAINDER, default=None)
+                      nargs=argparse.REMAINDER, default=[])
   parser.add_argument('--read_stdin', help='takes args from stdin?',
                       action='store_true', dest='read_stdin')
   parser.add_argument('--print_as', help='Explicity print returned output',

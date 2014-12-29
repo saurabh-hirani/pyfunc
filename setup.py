@@ -5,5 +5,5 @@ setup(name='pyfunc',
       description='Call python functions from your shell',
       author='Saurabh Hirani',
       author_email='saurabh.hirani@gmail.com',
-      scripts=['pyfunc'],
+      scripts=['callfunc.py'],
       py_modules=['shell_utils'])

@@ -16,9 +16,11 @@ sudo ./uninstall.sh
 * For builtin functions - just call them without any module prefix. For others,
   prefix them by their module name.
 
-    pyfunc -m range -a 1 5 2
+        pyfunc -m range -a 1 5 2
 
-    pyfunc -m string.upper -a test
+        pyfunc -m string.upper -a test
+
+        pyfunc -m string.replace -a 'analyze what' 'what' 'this'
 
 * Arguments can also be read from standard input by providing '-' symbol
 
@@ -38,6 +40,18 @@ sudo ./uninstall.sh
 
         pyfunc -m sum -s list:int,str -a "1 2 3"
 
+* For return values - you can print output in 3 ways:
+  - shell (default) - print strings as they are, list and dicts by iterating 
+    over them
+  - raw\_json
+  - pretty\_json
+
+        curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -a -
+
+        curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p raw_json -a -
+
+        curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p shell -a -
+
 * pyfunc provides some basic utility functions which are present in pyfunc.utils
 
         pyfunc -m pyfunc.utils.json_flatten -a nested_json_file
@@ -48,7 +62,22 @@ sudo ./uninstall.sh
         alias jsonflatten='pyfunc -m pyfunc.utils.json_flatten -a'
         alias strupper='pyfunc -m string.upper -a'
 
-        cat test.json | jsonflatten | strupper
+        curl http://pastebin.com/raw.php?i=BKv0fMc3 | jsonflatten | grep last | grep name | cut -f2 -d':' | strupper
+
+  where http://pastebin.com/raw.php?i=BKv0fMc3 is a pastebin snippet containing
+      
+      {
+            "name": {
+                    "last": "hirani",
+                    "middle": "prakash",
+                    "first": "saurabh"
+                  },
+            "rank": {
+                    "last": "3",
+                    "middle": "2",
+                    "first": "1"
+                  }
+          }
 
 ### What this module isn't
 
@@ -58,5 +87,4 @@ sudo ./uninstall.sh
 ### TODO
 
 - Pip it
-- Usage documentation
 - Use docopt instead of argparse

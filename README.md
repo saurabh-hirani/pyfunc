@@ -46,11 +46,11 @@ sudo ./uninstall.sh
   - raw\_json
   - pretty\_json
 
-        curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -a -
+      curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -a -
 
-        curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p raw_json -a -
+      curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p raw_json -a -
 
-        curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p shell -a -
+      curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p shell -a -
 
 * pyfunc provides some basic utility functions which are present in pyfunc.utils
 

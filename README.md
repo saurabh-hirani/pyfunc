@@ -23,5 +23,6 @@ Call python functions from your shell
 
 ### TODO
 
-- More documentation
 - Pip it
+- Usage documentation
+- Use docopt instead of argparse

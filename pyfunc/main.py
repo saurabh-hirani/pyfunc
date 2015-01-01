@@ -152,13 +152,15 @@ def parse_cmdline(args):
   parsed_args = parser.parse_args()
   return parsed_args
 
-def main(args):
+def main():
   """ Parse input, call method, return output """
-  parsed_args = parse_cmdline(sys.argv)
+  args = sys.argv[1:]
+  parsed_args = parse_cmdline(args)
   callerinfo = update_args(parsed_args)
   output = call_method(callerinfo.meth, callerinfo.args)
   if parsed_args.print_as != 'none':
     print_output(output, parsed_args.print_as)
+  return 0
 
 if __name__ == '__main__':
-  main(sys.argv)
+  sys.exit(main())

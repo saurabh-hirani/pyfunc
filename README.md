@@ -93,7 +93,13 @@ pip install pyfunc
   * reducing development time by enabling developers to write utilities in
     python and providing the interface to call them.
 
+### Where do we go from here
+
+* This module is relatively new and is work in progress. Design and feature
+  level feedback is welcome.
+
 ### TODO
 
-- Use docopt instead of argparse
-- Review more use cases and add features
+- Add basic tests. (I know - should've added them from the start.)
+- Review more use cases and see if the current design holds their test.
+- Use docopt instead of argparse (easier to make man pages with docopt).

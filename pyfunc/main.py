@@ -130,15 +130,17 @@ def parse_cmdline(args):
   """ Parse user input """
   desc = 'Call python methods from the cmdline'
   parser = argparse.ArgumentParser(description=desc)
-  parser.add_argument('-m', '--meth', help='method to call', required=True)
+  parser.add_argument('-m', '--meth',
+                      help='fqdn of method to call e.g. string.upper,range',
+                      required=True)
   parser.add_argument('-s', '--methsig',
-                      help='method signature comma sep - builtin|list:builtin',
+                      help='method signature comma sep e.g. int,list,list:int',
                       default=[])
   parser.add_argument('-a', '--args', help='method args',
                       nargs=argparse.REMAINDER, default=[])
   parser.add_argument('--read_stdin', help='takes args from stdin?',
                       action='store_true', dest='read_stdin')
-  parser.add_argument('-p', '--print_as', help='Explicity print returned output',
+  parser.add_argument('-p', '--print_as', help='print_as shell,raw_json,pretty_json',
                       default='shell')
   parser.set_defaults(read_stdin=True)
   parsed_args = parser.parse_args()

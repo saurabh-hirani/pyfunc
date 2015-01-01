@@ -65,19 +65,19 @@ sudo ./uninstall.sh
         curl http://pastebin.com/raw.php?i=BKv0fMc3 | jsonflatten | grep last | grep name | cut -f2 -d':' | strupper
 
   where http://pastebin.com/raw.php?i=BKv0fMc3 is a pastebin snippet containing
-      
+
       {
-            "name": {
-                    "last": "hirani",
-                    "middle": "prakash",
-                    "first": "saurabh"
-                  },
-            "rank": {
-                    "last": "3",
-                    "middle": "2",
-                    "first": "1"
-                  }
+          "name": {
+              "last": "hirani",
+              "middle": "prakash",
+              "first": "saurabh"
+          },
+          "rank": {
+              "last": "3",
+              "middle": "2",
+              "first": "1"
           }
+      }
 
 ### What this module isn't
 

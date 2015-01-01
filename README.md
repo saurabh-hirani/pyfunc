@@ -5,11 +5,7 @@ Call python functions from your shell
 
 ### Install 
 
-sudo ./install.sh
-
-### Uninstall 
-
-sudo ./uninstall.sh
+pip install pyfunc
 
 ### Examples
 
@@ -69,7 +65,7 @@ sudo ./uninstall.sh
 ```
   alias jsonflatten='pyfunc -m pyfunc.utils.json_flatten -a'
   alias strupper='pyfunc -m string.upper -a'
-  curl http://pastebin.com/raw.php?i=BKv0fMc3 | jsonflatten | grep last | grep name | cut -f2 -d':' | strupper
+  curl http://pastebin.com/raw.php?i=BKv0fMc3 2>/dev/null | jsonflatten | grep last | grep name | cut -f2 -d':' | strupper
 ```
 
   where http://pastebin.com/raw.php?i=BKv0fMc3 is a pastebin snippet containing
@@ -96,6 +92,5 @@ sudo ./uninstall.sh
 
 ### TODO
 
-- Pip it
 - Use docopt instead of argparse
 - Review more use cases and add features

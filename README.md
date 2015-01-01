@@ -3,27 +3,25 @@ pyfunc
 
 Call python functions from your shell
 
-Install 
-====
+### Install 
 
 ./install.sh
 
-Uninstall 
-====
+### Uninstall 
 
 ./uninstall.sh
 
-Examples
-====
+### Examples
 
-  echo test | pyfunc -m string.upper
+    echo test | pyfunc -m string.upper
 
-  pyfunc -m string.upper -a test
+    pyfunc -m range -a 1 5 2
 
-  pyfunc -m pyfunc.shell\_utils.json\_flatten -a nested\_json\_file
+    pyfunc -m string.upper -a test
 
-TODO
-====
+    pyfunc -m pyfunc.shell_utils.json_flatten -a nested_json_file
+
+### TODO
 
 - More documentation
 - Pip it

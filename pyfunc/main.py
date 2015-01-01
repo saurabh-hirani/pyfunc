@@ -97,7 +97,7 @@ def update_args(parsed_args):
       if type_str.startswith('list'):
         found_type = type_str
       else:
-        found_type = getattr(__builtin__, argtype_str.strip())
+        found_type = getattr(__builtin__, type_str.strip())
       actual_methsig.append(found_type)
       parsed_args.methsig = actual_methsig
 

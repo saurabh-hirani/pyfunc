@@ -23,10 +23,7 @@ def _print_shell(output):
 
 def _print_json(output, indent=False):
   """ Print output as json """
-  if indent:
-    print json.dumps(output, indent=4)
-    return
-  print json.dumps(output)
+  print(json.dumps(output, indent=4) if indent else json.dumps(output))
 
 def print_output(output, print_as):
   """ Print output returned by method call """
@@ -36,7 +33,6 @@ def print_output(output, print_as):
     _print_json(output)
   elif print_as == 'pretty_json':
     _print_json(output, indent=True)
-  return
 
 def call_method(meth, args):
   """ Call the method and return output """
@@ -54,10 +50,7 @@ def update_args(parsed_args):
     mod, meth = mod_meth
 
   # get the target module and method
-  if mod:
-    mod = importlib.import_module(mod)
-  else:
-    mod = __builtin__
+  mod = importlib.import_module(mod) if mod else __builtin__
 
   meth = getattr(mod, meth)
   parsed_args.mod, parsed_args.meth = mod, meth
@@ -94,10 +87,7 @@ def update_args(parsed_args):
     for type_str in methsig_strs:
       found_type = None
       # skip the arg type of list - as it requires further processing
-      if type_str.startswith('list'):
-        found_type = type_str
-      else:
-        found_type = getattr(__builtin__, type_str.strip())
+      found_type = type_str if type_str.startswith('list') else getattr(__builtin__, type_str.strip())
       actual_methsig.append(found_type)
       parsed_args.methsig = actual_methsig
 

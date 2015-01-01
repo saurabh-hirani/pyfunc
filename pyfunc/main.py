@@ -138,7 +138,7 @@ def parse_cmdline(args):
                       nargs=argparse.REMAINDER, default=[])
   parser.add_argument('--read_stdin', help='takes args from stdin?',
                       action='store_true', dest='read_stdin')
-  parser.add_argument('--print_as', help='Explicity print returned output',
+  parser.add_argument('-p', '--print_as', help='Explicity print returned output',
                       default='shell')
   parser.set_defaults(read_stdin=True)
   parsed_args = parser.parse_args()

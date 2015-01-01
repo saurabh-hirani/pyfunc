@@ -1,2 +1,2 @@
 #/bin/bash
-python setup.py sdist upload
+python setup.py sdist register upload

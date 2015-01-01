@@ -1,6 +1,6 @@
+import os
 import json
 import fileinput
-import copy
 
 def flatten_ds(data_struct, key="", path="", flattened=None):
   """ Flatten a nested data structure """
@@ -33,7 +33,10 @@ def f_set_diff(f1, f2):
 
 def json_read(json_file, compound_key=None):
   """ Read a json file """
-  json_str = ''.join(fileinput.input(json_file))
+  if os.path.exists(json_file):
+    json_str = ''.join(fileinput.input(json_file))
+  else:
+    json_str = json_file
   ds = json.loads(json_str)
 
   if compound_key is not None:

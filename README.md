@@ -87,8 +87,11 @@ pip install pyfunc
 
 ### What this module isn't
 
-* Replacement for shell utilities - pyfunc's aim is to make your utility
-  functions available on the command line.
+* Replacement for shell utilities - shell commands like tr, awk, cut, etc. are
+  indespensible and pyfunc's aim is to augment them by:
+  * enriching your shell with python's standard library functions.
+  * reducing development time by enabling developers to write utilities in
+    python and providing the interface to call them.
 
 ### TODO
 

@@ -9,14 +9,6 @@ from collections import namedtuple
 import __builtin__
 import json
 
-def import_package(pkg):
-  """ Import python package """
-  components = pkg.split('.')
-  mod = importlib.import_module(components[0])
-  for comp in components[1:]:
-    mod = getattr(mod, comp)
-  return mod
-
 def _print_shell(output):
   """ Print output to be consumed by shell """
   output_type = str(type(output))
@@ -63,11 +55,11 @@ def update_args(parsed_args):
 
   # get the target module and method
   if mod:
-    mod = import_package(mod)
-    meth = getattr(mod, meth)
+    mod = importlib.import_module(mod)
   else:
-    meth = getattr(__builtin__, meth)
+    mod = __builtin__
 
+  meth = getattr(mod, meth)
   parsed_args.mod, parsed_args.meth = mod, meth
 
   # check if user passed any args

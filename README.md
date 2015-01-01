@@ -98,3 +98,4 @@ sudo ./uninstall.sh
 
 - Pip it
 - Use docopt instead of argparse
+- Review more use cases and add features

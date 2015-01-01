@@ -13,22 +13,33 @@ pip install pyfunc
   prefix them by their module name.
 
 ```
-  pyfunc -m range -a 1 5 2
-  pyfunc -m string.upper -a test
-  pyfunc -m string.replace -a 'analyze what' 'what' 'this'
+  $ pyfunc -m range -a 1 7 2
+  1
+  3
+  5
+
+  $ pyfunc -m string.upper -a test
+  TEST
+
+  $ pyfunc -m string.replace -a 'analyze what' 'what' 'this'
+  analyze this
 ```
 
 * Arguments can also be read from standard input by providing '-' symbol
 
 ```
-  echo 1 | pyfunc -m range -a - 5 2
+  $ echo 1 | pyfunc -m range -a - 7 2
+  1
+  3
+  5
 ```
 
 * If the function takes only one argument (or others are optional),
   there is no need to give -a if you are feeding it from stdin
 
 ```
-  echo TeSt | pyfunc -m string.swapcase
+  $ echo TeSt | pyfunc -m string.swapcase
+  tEsT
 ```
 
 * Method signatures are assumed - if what you pass looks like an int - we wil
@@ -37,8 +48,11 @@ pip install pyfunc
   str/int - there is basic support to pass in other data types (list for now)
 
 ```
-  pyfunc -m string.join -s list,str -a "Good news everyone" " burp "
-  pyfunc -m sum -s list:int,str -a "1 2 3"
+  $ pyfunc -m string.join -s list,str -a "Good news everyone" " burp! "
+  Good burp! news burp! everyone
+
+  $ pyfunc -m sum -s list:int,str -a "1 2 3"
+  6
 ```
 
 * For return values - you can print output in 3 ways:
@@ -48,41 +62,42 @@ pip install pyfunc
   - pretty\_json
 
 ```
-  curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -a -
-  curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p raw_json -a -
-  curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p shell -a -
+  $ curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -a -
+  Host: headers.jsontest.com
+  Accept: */*
+  User-Agent: curl/7.32.0
+
+  $ curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p raw_json -a -
+  {"Host": "headers.jsontest.com", "Accept": "*/*", "User-Agent": "curl/7.32.0"}
+
+  $ curl http://headers.jsontest.com/ 2>/dev/null | pyfunc -m pyfunc.utils.json_read -p pretty_json -a -
+  {
+      "Host": "headers.jsontest.com", 
+      "Accept": "*/*", 
+      "User-Agent": "curl/7.32.0"
+  }
 ```
 
 * pyfunc provides some basic utility functions which are present in pyfunc.utils
 
 ```
-  pyfunc -m pyfunc.utils.json_flatten -a nested_json_file
+  $ curl http://pastebin.com/raw.php?i=BKv0fMc3 2>/dev/null | pyfunc -m pyfunc.utils.json_flatten 
+  rank.first: 1
+  rank.middle: 2
+  rank.last: 3
+  name.first: dwight
+  name.middle: kurt
+  name.last: schrute
 ```
 
 * The right use case would be to create aliases out of commonly used functions
   and use them in your command pipelines:
 
 ```
-  alias jsonflatten='pyfunc -m pyfunc.utils.json_flatten -a'
-  alias strupper='pyfunc -m string.upper -a'
-  curl http://pastebin.com/raw.php?i=BKv0fMc3 2>/dev/null | jsonflatten | grep last | grep name | cut -f2 -d':' | strupper
-```
-
-  where http://pastebin.com/raw.php?i=BKv0fMc3 is a pastebin snippet containing
-
-```
-  {
-    "name": {
-      "last": "hirani",
-      "middle": "prakash",
-      "first": "saurabh"
-    },
-    "rank": {
-      "last": "3",
-      "middle": "2",
-      "first": "1"
-    }
-  }
+  $ alias jsonflatten='pyfunc -m pyfunc.utils.json_flatten -a'
+  $ alias strupper='pyfunc -m string.upper -a'
+  $ curl http://pastebin.com/raw.php?i=BKv0fMc3 2>/dev/null | jsonflatten | grep first | grep name | cut -f2 -d':' | strupper
+  DWIGHT
 ```
 
 ### What this module isn't

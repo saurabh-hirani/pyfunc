@@ -16,11 +16,11 @@ sudo ./uninstall.sh
 * For builtin functions - just call them without any module prefix. For others,
   prefix them by their module name.
 
-        pyfunc -m range -a 1 5 2
-
-        pyfunc -m string.upper -a test
-
-        pyfunc -m string.replace -a 'analyze what' 'what' 'this'
+```
+  pyfunc -m range -a 1 5 2
+  pyfunc -m string.upper -a test
+  pyfunc -m string.replace -a 'analyze what' 'what' 'this'
+```
 
 * Arguments can also be read from standard input by providing '-' symbol
 
@@ -41,7 +41,7 @@ sudo ./uninstall.sh
         pyfunc -m sum -s list:int,str -a "1 2 3"
 
 * For return values - you can print output in 3 ways:
-  - shell (default) - print strings as they are, list and dicts by iterating 
+  - shell (default) - print strings as they are, list and dicts by iterating
     over them
   - raw\_json
   - pretty\_json

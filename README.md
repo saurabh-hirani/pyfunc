@@ -101,5 +101,5 @@ pip install pyfunc
 ### TODO
 
 - Add basic tests. (I know - should've added them from the start.)
-- Review more use cases and see if the current design holds their test.
+- Review more use cases and see if the current design survives their test.
 - Use docopt instead of argparse (easier to make man pages with docopt).

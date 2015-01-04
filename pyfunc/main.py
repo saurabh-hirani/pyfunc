@@ -9,41 +9,61 @@ from collections import namedtuple
 import __builtin__
 import json
 
-def _print_shell(output):
-  """ Print output to be consumed by shell """
-  output_type = str(type(output))
-  if 'list' in output_type or 'set' in output_type:
-    for val in output:
-      print val
-  elif 'dict' in output_type:
-    for k, v in output.iteritems():
-      print k + ': ' + str(v)
-  else:
-    print output
+class PyfuncPrinter(object):
+  """ Print output as required by print_as option """
 
-def _print_json(output, indent=False):
-  """ Print output as json """
-  print(json.dumps(output, indent=4) if indent else json.dumps(output))
+  def _print_shell(self):
+    """ Print output to be consumed by shell """
+    printable = []
+    data_type = str(type(self.data))
+    if 'list' in data_type or 'set' in data_type:
+      for val in self.data:
+        printable.append(str(val))
+    elif 'dict' in data_type:
+      for k, v in self.data.iteritems():
+        printable.append(k + ': ' + str(v))
+    else:
+        printable.append(str(data))
+    return printable
 
-def print_output(output, print_as):
-  """ Print output returned by method call """
-  if print_as == 'shell':
-    _print_shell(output)
-  elif print_as == 'raw_json':
-    _print_json(output)
-  elif print_as == 'pretty_json':
-    _print_json(output, indent=True)
+  def _print_raw_json(self):
+    """ Print output as raw json """
+    return [json.dumps(self.data)]
+
+  def _print_pretty_json(self):
+    """ Print output as pretty json """
+    return [json.dumps(self.data, indent=4)]
+
+  printers = {
+    'shell'   :    _print_shell,
+    'raw_json':    _print_raw_json,
+    'pretty_json': _print_pretty_json,
+  }
+
+  def __init__(self, data, print_as='shell', line_sep='\n'):
+    # validate the input
+    if print_as not in self.printers:
+      raise ValueError('Invalid value provided for print_as - %s' % print_as)
+    self.data = data
+    self.print_as = print_as
+    self.line_sep = line_sep
+    # create a printable string of the data as per the type
+    self.printable = self.line_sep.join(self.printers[print_as](self))
+
+  def __str__(self):
+    """ Return a printable string of print_as type """
+    return self.printable
 
 def call_method(meth, args):
   """ Call the method and return output """
   return meth(*args)
 
-def update_args(parsed_args):
+def _get_call_info(user_args):
   """ Process and enrich the args """
   mod, meth = None, None
 
   # check if the method is prefixed by a module
-  mod_meth = parsed_args.meth.rsplit('.', 1)
+  mod_meth = user_args.meth.rsplit('.', 1)
   if len(mod_meth) == 1:
     meth = mod_meth[0]
   else:
@@ -53,51 +73,51 @@ def update_args(parsed_args):
   mod = importlib.import_module(mod) if mod else __builtin__
 
   meth = getattr(mod, meth)
-  parsed_args.mod, parsed_args.meth = mod, meth
+  user_args.mod, user_args.meth = mod, meth
 
   # check if user passed any args
-  if not parsed_args.args:
-    if parsed_args.read_stdin:
-      parsed_args.args.append('-')
+  if not user_args.args:
+    if user_args.read_stdin:
+      user_args.args.append('-')
 
   # replaced stdin symbol with stuff from stdin
   updated_args = []
-  for arg in parsed_args.args:
-    if arg == '-' and parsed_args.read_stdin:
+  for arg in user_args.args:
+    if arg == '-' and user_args.read_stdin:
       updated_args.append(''.join(fileinput.input(arg)).rstrip())
       continue
     updated_args.append(arg)
 
-  parsed_args.args = updated_args
+  user_args.args = updated_args
 
   # assume argtypes as per args - unless specified otherwise
-  if not parsed_args.methsig:
+  if not user_args.methsig:
     # derive the arg types
-    for arg in parsed_args.args:
+    for arg in user_args.args:
       if re.match('^\d+$', arg):
-        parsed_args.methsig.append(int)
+        user_args.methsig.append(int)
       elif re.match('^\d+\.\d+$', arg):
-        parsed_args.methsig.append(float)
+        user_args.methsig.append(float)
       else:
-        parsed_args.methsig.append(str)
+        user_args.methsig.append(str)
   else:
     # arg types specified in meth sig - use them
-    methsig_strs = parsed_args.methsig.split(',')
+    methsig_strs = user_args.methsig.split(',')
     actual_methsig = []
     for type_str in methsig_strs:
       found_type = None
       # skip the arg type of list - as it requires further processing
       found_type = type_str if type_str.startswith('list') else getattr(__builtin__, type_str.strip())
       actual_methsig.append(found_type)
-      parsed_args.methsig = actual_methsig
+      user_args.methsig = actual_methsig
 
   # if there are no args to process - return
-  if not parsed_args.args:
-    return parsed_args
+  if not user_args.args:
+    return user_args
 
   # found the arg types - convert each arg into its specified argtype
   converted_args = []
-  for arg, argtype in zip(parsed_args.args, parsed_args.methsig):
+  for arg, argtype in zip(user_args.args, user_args.methsig):
     # handle case for list separately
     if str(argtype).startswith('list'):
       # if user intends the value of arg to be taken from stdin
@@ -113,10 +133,10 @@ def update_args(parsed_args):
     else:
       converted_args.append(argtype(arg))
 
-  parsed_args.args = converted_args
-  return parsed_args
+  user_args.args = converted_args
+  return user_args
 
-def parse_cmdline(args):
+def _parse_cmdline(args):
   """ Parse user input """
   desc = 'Call python methods from the cmdline'
   parser = argparse.ArgumentParser(description=desc)
@@ -128,22 +148,26 @@ def parse_cmdline(args):
                       default=[])
   parser.add_argument('-a', '--args', help='method args',
                       nargs=argparse.REMAINDER, default=[])
-  parser.add_argument('--read_stdin', help='takes args from stdin?',
+  parser.add_argument('-r', '--read_stdin', help='takes args from stdin?',
                       action='store_true', dest='read_stdin')
   parser.add_argument('-p', '--print_as', help='print_as shell,raw_json,pretty_json',
                       default='shell')
   parser.set_defaults(read_stdin=True)
-  parsed_args = parser.parse_args()
-  return parsed_args
+  user_args = parser.parse_args(args=args)
+  return user_args
+
+def get_call_info(args):
+  user_args = _parse_cmdline(args)
+  call_info = _get_call_info(user_args)
+  return call_info
 
 def main():
   """ Parse input, call method, return output """
-  args = sys.argv[1:]
-  parsed_args = parse_cmdline(args)
-  callerinfo = update_args(parsed_args)
-  output = call_method(callerinfo.meth, callerinfo.args)
-  if parsed_args.print_as != 'none':
-    print_output(output, parsed_args.print_as)
+  call_info = get_call_info(sys.argv[1:])
+  print call_info
+  output = call_method(call_info.meth, call_info.args)
+  if call_info.print_as != 'none':
+    print PyfuncPrinter(output, call_info.print_as)
   return 0
 
 if __name__ == '__main__':

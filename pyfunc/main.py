@@ -164,7 +164,6 @@ def get_call_info(args):
 def main():
   """ Parse input, call method, return output """
   call_info = get_call_info(sys.argv[1:])
-  print call_info
   output = call_method(call_info.meth, call_info.args)
   if call_info.print_as != 'none':
     print PyfuncPrinter(output, call_info.print_as)

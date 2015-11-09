@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import argparse
 import fileinput
 import importlib
@@ -8,6 +9,7 @@ import sys
 from collections import namedtuple
 import __builtin__
 import json
+import imp
 
 class PyfuncPrinter(object):
   """ Print output as required by print_as option """
@@ -23,7 +25,7 @@ class PyfuncPrinter(object):
       for k, v in self.data.iteritems():
         printable.append(k + ': ' + str(v))
     else:
-        printable.append(str(data))
+        printable.append(str(self.data))
     return printable
 
   def _print_raw_json(self):
@@ -62,17 +64,26 @@ def _get_call_info(user_args):
   """ Process and enrich the args """
   mod, meth = None, None
 
-  # check if the method is prefixed by a module
-  mod_meth = user_args.meth.rsplit('.', 1)
-  if len(mod_meth) == 1:
-    meth = mod_meth[0]
+  if user_args.methfile is not None:
+    if not os.path.exists(user_args.methfile):
+      raise ValueError('File %s does not exist' % user_args.methfile)
+    mod = imp.load_source('methfile', user_args.methfile)
+    meth = user_args.meth
   else:
-    mod, meth = mod_meth
+    # check if the method is prefixed by a module
+    mod_meth = user_args.meth.rsplit('.', 1)
+    if len(mod_meth) == 1:
+      meth = mod_meth[0]
+    else:
+      mod, meth = mod_meth
+    # get the target module and method
+    mod = importlib.import_module(mod) if mod else __builtin__
 
-  # get the target module and method
-  mod = importlib.import_module(mod) if mod else __builtin__
+  try:
+    meth = getattr(mod, meth)
+  except AttributeError:
+    raise ValueError('File %s does not have method %s' % (methfile, meth))
 
-  meth = getattr(mod, meth)
   user_args.mod, user_args.meth = mod, meth
 
   # check if user passed any args
@@ -140,8 +151,12 @@ def _parse_cmdline(args):
   """ Parse user input """
   desc = 'Call python methods from the cmdline'
   parser = argparse.ArgumentParser(description=desc)
+  parser.add_argument('-f', '--methfile',
+                      help='full path of the file in which target function is defined',
+                      required=False,
+                      default=None)
   parser.add_argument('-m', '--meth',
-                      help='fqdn of method to call e.g. string.upper,range',
+                      help='method to call e.g. string.upper,range',
                       required=True)
   parser.add_argument('-s', '--methsig',
                       help='method signature comma sep e.g. int,list,list:int',

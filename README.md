@@ -3,6 +3,8 @@ pyfunc
 
 Call python functions from your shell
 
+Why - http://saurabh-hirani.github.io/writing/2015/08/14/pyfunc/
+
 ### Install 
 
 pip install pyfunc
